@@ -1,0 +1,58 @@
+﻿@page "/cart"
+
+@inject IShoppingCartStateStore shoppingCartStateStore
+@inject IViewShoppingCartUseCase viewShoppingCartUseCase
+
+<h3>Shopping Cart</h3>
+<br/>
+@if (order != null && order.LineItems != null && order.LineItems.Count > 0)
+{
+    <div class="row">
+        <div class="col-6">
+            <ul>
+                @*@foreach(var item in order.LineItems)*@
+                @for (int i = 0; i < order.LineItems.Count; i++)
+                {
+                    <LineItemComponent 
+                                       LineItem="order.LineItems[i]" 
+                                       OnDeleteProduct="HandleDeleteProduct"
+                                       OnUpdateQuantity="HandleUpdateQuantity"></LineItemComponent>
+                    @if (i < order.LineItems.Count - 1)
+                    {
+                        <li style="list-style:none">
+                            <hr />
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+        <div class="col">
+            <OrderSummaryComponent Order="order"></OrderSummaryComponent>
+        </div>
+    </div>    
+}
+
+@code {
+    private Order order;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            shoppingCartStateStore.AddStateChangeListeners(HandleShoppingCartStateChange);
+            order = await viewShoppingCartUseCase.Execute();
+            StateHasChanged();
+        }
+    }
+
+    private void HandleDeleteProduct(Order order) => this.order = order;
+
+    private void HandleUpdateQuantity(Order order) => this.order = order;
+
+    private async void HandleShoppingCartStateChange()
+    {
+        order = await viewShoppingCartUseCase.Execute();
+        StateHasChanged();
+    }
+
+}

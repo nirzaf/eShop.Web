@@ -1,0 +1,28 @@
+﻿<div class="form-inline">    
+    <div class="form-group mx-sm-3 mb-2">
+        <label for="filter">Search:&nbsp;&nbsp;</label>
+        <input type="text" class="form-control" id="filter" @bind-value="filter" @onkeyup="HandleKeyUp" />        
+    </div>
+    <button type="button" class="btn btn-primary mb-2" @onclick="HandleSearch">Search</button>
+</div>
+
+@code {
+    private string filter;
+
+    [Parameter]
+    public EventCallback<string> OnSearch { get; set; }
+
+    private void HandleSearch()
+    {
+        OnSearch.InvokeAsync(filter);
+    }
+
+    private void HandleKeyUp(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter" )
+        {
+            OnSearch.InvokeAsync(filter);
+        }
+    }
+
+}

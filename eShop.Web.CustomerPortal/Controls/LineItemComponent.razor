@@ -1,0 +1,65 @@
+﻿@inject IDeleteProductUseCase deleteProductUseCase
+@inject IUpdateQuantityUseCase updateQuantityUseCase 
+
+<MessageComponent @ref="messageComponent"></MessageComponent>
+
+@if (LineItem != null && LineItem.Product != null)
+{
+    <li class="row">
+        <div class="col">
+            <img src="@LineItem.Product.ImageLink" />
+        </div>
+        <div class="col">
+            <h5>@LineItem.Product.Name</h5>
+            <div>
+                Quantity:&nbsp;&nbsp;
+                <input type="number" min="0" value="@LineItem.Quantity" @onchange="HandleQuantityChange" />
+            </div>
+            <div class="mt-2">                
+                 Price:&nbsp;&nbsp;@LineItem.Product.Price.ToString("c")                
+            </div>
+        </div>
+        <div class="col">
+            <button class="btn btn-light" @onclick="@(() => DeleteProduct(LineItem.ProductId))">Delete</button>
+        </div>
+    </li>
+}
+
+@code {
+
+    [Parameter]
+    public OrderLineItem LineItem { get; set; }
+
+    [Parameter]
+    public EventCallback<Order> OnDeleteProduct { get; set; }
+
+    [Parameter]
+    public EventCallback<Order> OnUpdateQuantity { get; set; }
+
+    MessageComponent messageComponent;
+
+    private async void DeleteProduct(int productId)
+    {
+        var order = await deleteProductUseCase.Execute(productId);
+        await OnDeleteProduct.InvokeAsync(order);
+    }
+
+    private async void HandleQuantityChange(ChangeEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(e.Value.ToString())) return;
+        int qty = 0;
+        if (int.TryParse(e.Value.ToString(), out qty))
+        {
+            if (qty < 0)
+            {
+                messageComponent.ShowError("Quantity of a line item cannot be less than zero.");
+                return;
+            }
+
+            var order = await updateQuantityUseCase.Execute(LineItem.ProductId, qty);
+            await OnUpdateQuantity.InvokeAsync(order);
+        }
+
+    }
+
+}

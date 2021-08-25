@@ -1,0 +1,76 @@
+﻿@inject NavigationManager NavigationManager
+
+    <div class="card m-2" style="width: 25rem;">
+        <div class="card-body">
+            <h5 class="card-title">Order Summary</h5>
+            <div class="card-text d-flex justify-content-between">
+                <div>
+                    Items (@itemsCount):
+                </div>
+                <div>
+                    @itemsTotalPrice.ToString("c")
+                </div>
+            </div>
+            <div class="card-text d-flex justify-content-between">
+                <div>
+                    Shipping And Handling:
+                </div>
+                <div>
+                    <text>$0.00</text>
+                </div>
+            </div>
+            <div class="card-text d-flex justify-content-between">
+                <div>
+                    Estimated Tax:
+                </div>
+                <div>
+                    <text>$0.00</text>
+                </div>
+            </div>
+            <hr />
+            <div class="card-text d-flex justify-content-between" style="color:darkred">
+                <div>
+                    <b>Order Total:</b>
+                </div>
+                <div>
+                    <b>@itemsTotalPrice.ToString("c")</b>
+                </div>
+            </div>
+        </div>
+        @if (!HidePlaceOrderButton)
+        {
+            <button class="button btn-primary" @onclick="PlaceOrder">Place your order</button>
+        }
+    </div>
+
+@code {
+    int itemsCount = 0;
+    double itemsTotalPrice = 0;
+
+    [Parameter]
+    public Order Order { get; set; }
+
+    [Parameter]
+    public bool HidePlaceOrderButton { get; set; } = false;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (Order != null)
+        {
+            itemsCount = Order.LineItems.Count;
+            itemsTotalPrice = 0;
+            foreach (var item in Order.LineItems)
+            {
+                itemsTotalPrice += item.Price * item.Quantity;
+            }
+        }
+    }
+
+    private void PlaceOrder()
+    {
+        NavigationManager.NavigateTo("/PlaceOrder");
+    }
+
+}

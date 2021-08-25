@@ -1,0 +1,20 @@
+﻿<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(Program).Assembly"
+            AdditionalAssemblies="new[] {
+            typeof(eShop.Web.CustomerPortal.Pages.ViewProductComponent).Assembly,
+            typeof(eShop.Web.AdminPortal.Pages.OutstandingOrdersComponent).Assembly
+        }">
+        <Found Context="routeData">            
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    <LoginComponent></LoginComponent>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p>Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>

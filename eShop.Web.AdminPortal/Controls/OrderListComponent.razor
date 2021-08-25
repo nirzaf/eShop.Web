@@ -1,0 +1,29 @@
+﻿@if (Orders != null && Orders.Count() > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date Placed</th>
+                <th>Order Id</th>
+                <th>Country</th>
+                <th>State / Province</th>
+                <th>City</th>
+                <th>Customer Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Orders)
+            {
+                <OrderComponent Order="order"></OrderComponent>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+
+    [Parameter]
+    public IEnumerable<Order> Orders { get; set; }
+
+}

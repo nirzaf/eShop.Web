@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\eShop.DataStore.SQL.Dapper\eShop.DataStore.SQL.Dapper.csproj" />
+    <ProjectReference Include="..\eShop.ShoppingCart.LocalStorage\eShop.ShoppingCart.LocalStorage.csproj" />
+    <ProjectReference Include="..\eShop.StateStore.LocalStorage\eShop.StateStore.LocalStorage.csproj" />
+    <ProjectReference Include="..\eShop.UseCases\eShop.UseCases.csproj" />
+    <ProjectReference Include="..\eShop.Web.AdminPortal\eShop.Web.AdminPortal.csproj" />
+    <ProjectReference Include="..\eShop.Web.Common\eShop.Web.Common.csproj" />
+    <ProjectReference Include="..\eShop.Web.CustomerPortal\eShop.Web.CustomerPortal.csproj" />
+    <ProjectReference Include="..\Plugins\eShop.DataStore.HardCoded\eShop.DataStore.HardCoded.csproj" />
+  </ItemGroup>
+
+</Project>

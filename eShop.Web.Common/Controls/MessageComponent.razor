@@ -1,0 +1,44 @@
+﻿@if (!string.IsNullOrWhiteSpace(message))
+{
+    <div class="@classNames" role="alert">
+        @message
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"
+                @onclick="HandleClose">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+
+@code {
+
+    private string message;
+    private string classNames;
+
+    public void ShowInfo(string info)
+    {
+        message = info;
+        classNames = $"alert alert-primary";
+        StateHasChanged();
+    }
+
+    public void ShowWarning(string warning)
+    {
+        message = warning;
+        classNames = $"alert alert-warning";
+        StateHasChanged();
+    }
+
+    public void ShowError(string error)
+    {
+        message = error;
+        classNames = $"alert alert-danger";
+        StateHasChanged();
+    }
+
+    private void HandleClose()
+    {
+        message = string.Empty;
+        classNames = string.Empty;
+    }
+}

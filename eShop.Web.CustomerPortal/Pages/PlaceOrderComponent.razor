@@ -1,0 +1,59 @@
+﻿@page "/placeorder"
+
+@inject NavigationManager NavigationManager
+@inject IViewShoppingCartUseCase viewShoppingCartUseCase
+@inject IPlaceOrderUseCase placeOrderUseCase 
+
+<MessageComponent @ref="msgComponent"></MessageComponent>
+
+<h3>Placing Order</h3>
+<br />
+
+@if (order != null)
+{
+<div class="row">
+    <div class="col">
+        <CustomerFormComponent OnCustomerInfoSubmitted="HandleCustomerInfoSubmitted"></CustomerFormComponent>
+    </div>
+    <div class="col">
+        <OrderSummaryComponent Order="order" HidePlaceOrderButton="true"></OrderSummaryComponent>
+    </div>
+</div>
+}
+
+
+
+
+@code {
+
+    private Order order;
+
+    private MessageComponent msgComponent;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            order = await viewShoppingCartUseCase.Execute();
+            StateHasChanged();
+        }
+    }
+
+    private async void HandleCustomerInfoSubmitted(CustomerViewModel customer)
+    {
+        var mapper = new AutoMapper.MapperConfiguration(cfg => cfg.CreateMap<CustomerViewModel, Order>()).CreateMapper();
+        mapper.Map<CustomerViewModel, Order>(customer, order);
+
+        var orderUniqueId = await placeOrderUseCase.Execute(order);
+        if (string.IsNullOrWhiteSpace(orderUniqueId))
+        {
+            // error occured, not able to place order, please contact the admin
+            msgComponent.ShowError("Information in the order is invalid, please double check.");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/orderconfirm/{orderUniqueId}");
+        }
+    }
+
+}

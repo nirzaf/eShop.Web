@@ -1,0 +1,84 @@
+﻿@page "/processorder/{id:int}"
+
+@attribute [Authorize]
+
+@inject NavigationManager NavigationManager
+
+@inject IViewOrderDetailUseCase viewOrderDetailUseCase
+@inject IProcessOrderUseCase processOrderUseCase
+
+<h3>Process Order</h3>
+
+@if (order != null)
+{
+    <p>
+        <b>Customer Info:</b>
+    </p>
+    <p>@order.CustomerName</p>
+    <p>@order.CustomerAddress</p>
+    <p>@order.CustomerCity</p>
+    <p>@order.CustomerStateProvince</p>
+    <p>@order.CustomerCountry</p>
+    <br />
+
+    <br />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in order.LineItems)
+            {
+                <tr>
+                    <td>@item.Product.Name</td>
+                    <td>@item.Product.Price</td>
+                    <td>@item.Quantity</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <br />
+    <button type="button" class="btn btn-primary" @onclick="HandleProcessOrder">Mark Order as Processed</button>
+}
+
+@code {
+    private AuthenticationState authState;
+
+    [Parameter]
+    public int Id { get; set; } = 0;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authStateTask { get; set; }
+
+    private Order order;
+
+    protected async override Task OnInitializedAsync()
+    {
+        authState = await authStateTask;
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (Id > 0)
+        {
+            order = viewOrderDetailUseCase.Execute(Id);
+        }
+    }
+
+    private void HandleProcessOrder()
+    {
+        if (order != null && authState != null)
+        {
+            processOrderUseCase.Execute(order.OrderId.Value, authState.User.Identity.Name);
+            NavigationManager.NavigateTo("outstandingorders");
+        }
+    }
+
+}
