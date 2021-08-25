@@ -1,18 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using eShop.Web.Data;
 using eShop.UseCases.SearchProductScreen;
 using eShop.UseCases.PluginInterfaces.DataStore;
-using eShop.ShoppingCart.LocalStorage;
 // using eShop.DataStore.HardCoded;
 using eShop.DataStore.SQL.Dapper;
 using eShop.UseCases.ViewProductScreen;
@@ -56,18 +48,18 @@ namespace eShop.Web
             services.AddServerSideBlazor();
 
             services.AddTransient<JsNavigator>();
-            
+
             //services.AddSingleton<IProductRepository, ProductRepository>();
             //services.AddSingleton<IOrderRepository, OrderRepository>();
             services.AddScoped<IShoppingCartStateStore, ShoppingCartStateStore>();
-            
+
             services.AddTransient<IOrderService, OrderService>();
 
             services.AddTransient<IDataAccess>(sp => new DataAccess(Configuration.GetConnectionString("Default")));
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
 
-            services.AddTransient<IShoppingCart, eShop.ShoppingCart.LocalStorage.ShoppingCart>();            
+            services.AddTransient<IShoppingCart, eShop.ShoppingCart.LocalStorage.ShoppingCart>();
             services.AddTransient<ISearchProductUseCase, SearchProductUseCase>();
             services.AddTransient<IViewProductUseCase, ViewProductUseCase>();
             services.AddTransient<IAddProductToCartUseCase, AddProductToCartUseCase>();
